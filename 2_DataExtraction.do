@@ -4,8 +4,6 @@
 Data extraction from figures was done using the online image analysis tool WebPlotDigitizer by Ankit Rohatgi (https://automeris.io/WebPlotDigitizer/index.html). Images and calculations are stored in the Papers folder. 
 */
 
-capture: mkdir Data
-
 
 *** Input data from papers
 

@@ -1,4 +1,8 @@
 ***** 1_Setup.do *****
+** Folders
+capture: mkdir Data
+capture: mkdir Output
+
 ** General
 set scheme s2color
 grstyle init graphlayout, replace

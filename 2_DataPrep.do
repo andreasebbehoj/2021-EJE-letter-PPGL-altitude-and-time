@@ -1,6 +1,4 @@
 ***** 2_DataPrep.do *****
-capture: mkdir Output
-
 
 *** Combine study files
 clear
