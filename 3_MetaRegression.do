@@ -17,6 +17,7 @@ estat bubbleplot, ///
 	title("") note("P`r(pvalstring)'") ///
 	legend(off) `options' //
 graph export "Output/`save'.png", replace
+graph export "Output/`save'.pdf", replace
 end
 
 	
