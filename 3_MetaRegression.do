@@ -67,3 +67,29 @@ meta_bubble, var(altitude) save(YearlyData_Altitude) xtitle(Altitude in meters) 
 		0.65 64 `"2021 Ebbehoj"'  ///
 		0.87 773 `"2021 Leung"' ///
 		, msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5))
+
+** Annual estimates (wo./Kim et al)
+use Output/IncidenceByYear, clear
+drop if ref=="Andersen 1988" | ref=="Kim 2020"
+
+meta set mean se if mean!=0 /// cannot include years with N=0
+	, studylabel(ref2)
+
+meta_bubble, var(year) save(YearlyData_Year_woKim) xtitle(Year) ///
+	addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))
+
+meta_bubble, var(altitude) save(YearlyData_Altitude_woKim) xtitle(Altitude in meters) ///
+	addplot(scatteri ///
+		0.1 134 `"1964 Graeff"'  ///
+		0.87 355 `"1983 Beard"'  ///
+		0.4 111 `"1985 Hartley"'  ///
+		0.4 120 `"1986 Stenström"'  ///
+		0.40 297 `"1994 Fernandez-Calvet"'  ///
+		0.82 104 `"2000 Takayanagi"'  ///
+		0.48 77 `"2014 Holland"'  ///
+		0.67 134 `"2018 Berends"'  ///
+		0.93 64	`"2020 Cvasciuc"' ///
+		1.3 355 `"2020 Ebbehoj"'  ///
+		0.65 64 `"2021 Ebbehoj"'  ///
+		0.87 773 `"2021 Leung"' ///
+		, msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5))

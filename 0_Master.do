@@ -1,3 +1,5 @@
+log using Output/StataLog, replace text
+
 ***** 0_Master.do *****
 clear
 
@@ -8,3 +10,5 @@ do 2_DataPrep.do
 
 do 3_GraphIncidence.do
 do 3_MetaRegression.do
+
+log close
