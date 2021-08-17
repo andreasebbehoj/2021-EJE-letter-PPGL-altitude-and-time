@@ -240,6 +240,23 @@ gen ref = "Kim 2020"
 save "Data/Kim 2020", replace
 
 
+** Cvasciuc 2020
+clear 
+input year pop cases
+2010 1800000 6
+2011 1800000 8
+2012 1800000 8
+2013 1800000 7
+2014 1800000 12
+2015 1800000 14
+2016 1800000 10
+2017 1800000 9
+2018 1800000 11
+end
+gen ref = "Cvasciuc 2020"
+save "Data/Cvasciuc 2020", replace
+
+
 ** Ebbehoj 2021
 /* Population from Statistics Denmark (source cited in paper): 
 https://www.statbank.dk/statbank5a/default.asp?w=1920

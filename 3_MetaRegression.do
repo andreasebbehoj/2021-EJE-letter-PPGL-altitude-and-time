@@ -61,6 +61,7 @@ meta_bubble, var(altitude) save(YearlyData_Altitude) xtitle(Altitude in meters) 
 		0.82 104 `"2000 Takayanagi"'  ///
 		0.48 77 `"2014 Holland"'  ///
 		0.67 134 `"2018 Berends"'  ///
+		0.93 64	`"2020 Cvasciuc"' ///
 		1.3 355 `"2020 Ebbehoj"'  ///
 		0.25 72 `"2020 Kim"'  ///
 		0.65 64 `"2021 Ebbehoj"'  ///
