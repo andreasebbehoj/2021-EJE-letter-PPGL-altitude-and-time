@@ -7,7 +7,9 @@ The purpose of this repository is to provide transparency about the analysis and
 Notes:
 - The code was written in Stata Statistical Software version 16.1
 - The whole code is run from the 0_master do-file
-- The Input folder contains all data extracted from the previous PPGL incidence papers that is necessary to run the analysis.
+- The Input folder contains study meta-data from the previous PPGL incidence papers in an Excel file.
+- The 2_DataExtraction.do contains year-by-year incidence rates for each paper
+- The Output folder contains log file, combined study data in excel format, and the resulting figures in PDF format
 
 ## Inclusion criteria
 We included all papers presenting the incidence of PPGL in a defined geographic location.
