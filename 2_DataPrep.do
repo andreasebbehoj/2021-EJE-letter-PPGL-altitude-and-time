@@ -48,7 +48,7 @@ forvalues x = 1/`r(N)' {
 drop year_from year_to notes
 order inletter year_pub ref location period tumor altitude total_cases
 save Output/StudyOverview.dta, replace
-
+export excel Output/StudyOverview.xlsx, replace firstrow(var)
 
 
 *** Calculate IR and SE by year
@@ -76,3 +76,4 @@ forvalues x = 1/`r(N)' {
 
 * Save
 save Output/IncidenceByYear.dta, replace
+export excel Output/IncidenceByYear.xlsx, replace firstrow(var)
