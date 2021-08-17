@@ -1,0 +1,1067 @@
+----------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\au335571\Forskning\2021-EJE-letter-PPGL-altitude-and-time\Output/StataLog.log
+  log type:  text
+ opened on:  17 Aug 2021, 17:11:42
+
+. 
+. ***** 0_Master.do *****
+. clear
+
+. 
+. do 1_Setup.do
+
+. ***** 1_Setup.do *****
+. ** Folders
+. capture: mkdir Data
+
+. capture: mkdir Output
+
+. 
+. ** General
+. set scheme s2color
+
+. grstyle init graphlayout, replace
+
+. grstyle set plain // No plot region color, white background + other tweaks
+
+. 
+. ** Size
+. grstyle set graphsize 1200pt 1200pt // in pixels, default is 5.5 inches *72 pt/inch = 396pt
+
+. grstyle set symbolsize small
+
+. grstyle set size 40pt: axis_title // X and Y axis text size
+
+. 
+. ** Axis
+. grstyle anglestyle vertical_tick horizontal // Horizontal "tick"text on y-axis
+
+. grstyle color major_grid gs11 // colour of horizontal lines
+
+. 
+. 
+. ** Colors
+. colorpalette plottig, nograph 
+
+. forvalues x = 1/15 {
+  2.         global color_`x' = "`r(p`x')'"
+  3. }
+
+. 
+. 
+. *** Program to format p-value
+. capture: program drop pval_tostring
+
+. program define pval_tostring, rclass    
+  1. syntax, pval(string)
+  2. 
+. * Format p-val
+. if `pval'>0.99 {
+  3.         return local pvalstring = ">0.99"
+  4. }
+  5. if inrange(`pval', 0.05, 0.99) {
+  6.         return local pvalstring = "=" + string(round(`pval', 0.01), "%4.2f")
+  7. }
+  8. if `pval'>=0.001 & `pval'<0.05 {
+  9.         return local pvalstring = "=" + string(round(`pval', 0.001), "%4.3f")
+ 10. }
+ 11. if `pval'<0.001 {
+ 12.         return local pvalstring = "<0.001"
+ 13. }
+ 14. end
+
+. 
+end of do-file
+
+. 
+. do 2_DataExtraction.do
+
+. ***** 2_DataExtraction.do *****
+. /* Data extracted from papers and from publicly available data when necessary. Public sources are cited below. 
+> 
+> Data extraction from figures was done using the online image analysis tool WebPlotDigitizer by Ankit Rohatgi (https://automeris.io/Web
+> PlotDigitizer/index.html). Images and calculations are stored in the Papers folder. 
+> */
+. 
+. 
+. *** Input data from papers
+. 
+. ** Graeff 1964
+. // Annual population from paper
+. clear
+
+. input year pop cases
+
+          year        pop      cases
+  1. 1949 9955594 4
+  2. 1950 10113527 2
+  3. 1951 10264311 1
+  4. 1952 10381987 6
+  5. 1953 10493184 4
+  6. 1954 10615380 2
+  7. 1955 10750842 1
+  8. 1956 10889351 7
+  9. 1957 11026383 6
+ 10. 1958 11186875 11
+ 11. end
+
+. gen ref = "Graeff 1964"
+
+. save "Data/Graeff 1964", replace
+file Data/Graeff 1964.dta saved
+
+. 
+. 
+. ** Beard 1983
+. // average population from paper (45800/year x 10 year periods)
+. clear
+
+. input year_from year_to pop cases
+
+     year_from    year_to        pop      cases
+  1. 1950 1959 458000 4
+  2. 1960 1969 458000 3
+  3. 1970 1979 458000 6
+  4. end
+
+. gen ref = "Beard 1983"
+
+. save "Data/Beard 1984", replace
+file Data/Beard 1984.dta saved
+
+. 
+. 
+. ** Hartley 1985
+. // Average population from paper
+. clear
+
+. input year pop cases
+
+          year        pop      cases
+  1. 1970 2000000 0
+  2. 1971 2000000 3
+  3. 1972 2000000 1
+  4. 1973 2000000 4
+  5. 1974 2000000 0
+  6. 1975 2000000 4
+  7. 1976 2000000 2
+  8. 1977 2000000 4
+  9. 1978 2000000 3
+ 10. 1979 2000000 8
+ 11. 1980 2000000 1
+ 12. 1981 2000000 5
+ 13. 1982 2000000 3
+ 14. 1983 2000000 7
+ 15. end
+
+. gen ref = "Hartley 1985"
+
+. save "Data/Hartley 1985", replace
+file Data/Hartley 1985.dta saved
+
+. 
+. 
+. ** Stenström 1986
+. // annual population from Statistics Sweden (source cited in the paper): http://www.statistikdatabasen.scb.se/pxweb/en/ssd/START__BE__
+> BE0101__BE0101A/BefolkningR1860N/table/tableViewLayout1/
+. clear 
+
+. input year pop cases
+
+          year        pop      cases
+  1. 1958 7429675 7
+  2. 1959 7462823 12
+  3. 1960 7497967 7
+  4. 1961 7542028 11
+  5. 1962 7581148 7
+  6. 1963 7627507 11
+  7. 1964 7695200 15
+  8. 1965 7772506 17
+  9. 1966 7843088 22
+ 10. 1967 7892774 23
+ 11. 1968 7931193 15
+ 12. 1969 8004270 19
+ 13. 1970 8081229 15
+ 14. 1971 8115165 17
+ 15. 1972 8129129 23
+ 16. 1973 8144428 15
+ 17. 1974 8176691 32
+ 18. 1975 8208442 32
+ 19. 1976 8236179 20
+ 20. 1977 8267116 25
+ 21. 1978 8284437 16
+ 22. 1979 8303010 21
+ 23. 1980 8317937 30
+ 24. 1981 8323033 27
+ 25. end
+
+. gen ref = "Stenström 1986"
+
+. save "Data/Stenström 1986", replace
+file Data/Stenström 1986.dta saved
+
+. 
+. 
+. ** Andersen 1988
+. // Average population from paper (5000000 x 5 years)
+. // Note that paper report 47 cases, but 4 were diagnosed before 1977 and should therefore be excluded
+. clear 
+
+. input year_from year_to pop cases
+
+     year_from    year_to        pop      cases
+  1. 1977 1981 20000000 43
+  2. end
+
+. gen ref = "Andersen 1988"
+
+. save "Data/Andersen 1988", replace
+file Data/Andersen 1988.dta saved
+
+. 
+. 
+. ** Fernández-Calvet 1994
+. // Annual population from paper
+. clear
+
+. input year pop cases 
+
+          year        pop      cases
+  1. 1980 514291 2
+  2. 1981 508618 2
+  3. 1982 514937 2
+  4. 1983 524300 1
+  5. 1984 531585 0
+  6. 1985 537107 1
+  7. 1986 516668 0
+  8. 1987 518214 0
+  9. 1988 527242 0
+ 10. 1989 532007 2
+ 11. 1990 537005 2
+ 12. 1991 522953 1
+ 13. 1992 526216 1
+ 14. end
+
+. gen ref = "Fernandez-Calvet 1994"
+
+. save "Data/Fernandez-Calvet 1994", replace
+file Data/Fernandez-Calvet 1994.dta saved
+
+. 
+. 
+. ** Takayanagi 2000
+. /* Population from: https://www.e-stat.go.jp/en/stat-search/files?page=1&layout=datalist&toukei=00200524&tstat=000000090001&cycle=7&ye
+> ar=19970&month=0&tclass1=000001011679
+> 
+> Note that this paper sent out questionnaires to all university hospitals and to internal medicine departments at 2117 randomly selecte
+> d medium sized hospitals. Based on responses, they extrapolated the results to all 17740 medium sized hospitals in Japan. 
+> */
+. clear 
+
+. input year pop cases 
+
+          year        pop      cases
+  1. 1997 126166000 1030
+  2. end
+
+. gen ref = "Takayanagi 2000"
+
+. save "Data/Takayanagi 2000", replace
+file Data/Takayanagi 2000.dta saved
+
+. 
+. ** Holland 2014
+. // Average population from paper (they used the 2001-population 512930 x 10 years)
+. clear
+
+. input year_from year_to pop cases
+
+     year_from    year_to        pop      cases
+  1. 2001 2010 5129300 24
+  2. end
+
+. gen ref = "Holland 2014"
+
+. save "Data/Holland 2014", replace
+file Data/Holland 2014.dta saved
+
+. 
+. 
+. ** Berends 2018
+. /* Population from Statistics Netherlands (source mentioned but not cited in paper): https://opendata.cbs.nl/statline/#/CBS/en/dataset
+> /37296eng/table?ts=1623933707525
+> 
+> Number cases were estimated by reading the incidence rates (fig 3) and multiplying by population. This resulted in a slight overestima
+> tion of N with 1562 patients compared to 1493 patients reported in the paper.
+> */
+. clear
+
+. input year pop cases 
+
+          year        pop      cases
+  1. 1995 15424122 57
+  2. 1996 15493889 62
+  3. 1997 15567107 58
+  4. 1998 15654192 66
+  5. 1999 15760225 44
+  6. 2000 15863950 44
+  7. 2001 15987075 45
+  8. 2002 16105285 61
+  9. 2003 16192572 78
+ 10. 2004 16258032 54
+ 11. 2005 16305526 72
+ 12. 2006 16334210 75
+ 13. 2007 16357992 90
+ 14. 2008 16405399 94
+ 15. 2009 16485787 84
+ 16. 2010 16574989 94
+ 17. 2011 16655799 87
+ 18. 2012 16730348 102
+ 19. 2013 16779575 79
+ 20. 2014 16829289 113
+ 21. 2015 16900726 103
+ 22. end
+
+. gen ref = "Berends 2018"
+
+. save "Data/Berends 2018", replace
+file Data/Berends 2018.dta saved
+
+. 
+. 
+. ** Ebbehoj 2020
+. /* Population from Rochester Epidemiology Project (source cited in paper):
+> https://rochesterproject.org/for-researchers/population-overview/
+> Number of cases and years of diagnosis determined by reading incidence rates (fig 1F) and multiplying by population. 
+> */
+. clear
+
+. input year pop cases
+
+          year        pop      cases
+  1. 1995 112443 1
+  2. 1996 113063 0
+  3. 1997 114548 0
+  4. 1998 116931 1
+  5. 1999 119077 0
+  6. 2000 124970 1
+  7. 2001 126954 1
+  8. 2002 129522 1
+  9. 2003 131747 0
+ 10. 2004 133908 0
+ 11. 2005 135816 0
+ 12. 2006 138287 0
+ 13. 2007 140508 1
+ 14. 2008 142799 1
+ 15. 2009 144921 1
+ 16. 2010 144507 1
+ 17. 2011 145819 0
+ 18. 2012 146931 0
+ 19. 2013 148918 1
+ 20. 2014 150058 1
+ 21. 2015 151334 0
+ 22. 2016 153183 3
+ 23. 2017 154930 0
+ 24. end
+
+. gen ref = "Ebbehoj 2020"
+
+. save "Data/Ebbehoj 2020", replace
+file Data/Ebbehoj 2020.dta saved
+
+. 
+. 
+. ** Kim 2020
+. /* Population from Statistics Korea (source mentioned but not cited in paper):
+> https://kosis.kr/eng/statisticsList/statisticsListIndex.do?menuId=M_01_01&vwcd=MT_ETITLE&parmTabId=M_01_01&statId=1962001&themaId=#Sel
+> ectStatsBoxDiv
+> */
+. clear
+
+. input year pop cases
+
+          year        pop      cases
+  1. 2003 47892330 76
+  2. 2004 48082519 54
+  3. 2005 48184561 63
+  4. 2006 48438292 61
+  5. 2007 48683638 61
+  6. 2008 49054708 94
+  7. 2009 49307835 100
+  8. 2010 49554112 122
+  9. 2011 49936638 123
+ 10. 2012 50199853 107
+ 11. 2013 50428893 96
+ 12. 2014 50746659 91
+ 13. end
+
+. gen ref = "Kim 2020"
+
+. save "Data/Kim 2020", replace
+file Data/Kim 2020.dta saved
+
+. 
+. 
+. ** Cvasciuc 2020
+. clear 
+
+. input year pop cases
+
+          year        pop      cases
+  1. 2010 1800000 6
+  2. 2011 1800000 8
+  3. 2012 1800000 8
+  4. 2013 1800000 7
+  5. 2014 1800000 12
+  6. 2015 1800000 14
+  7. 2016 1800000 10
+  8. 2017 1800000 9
+  9. 2018 1800000 11
+ 10. end
+
+. gen ref = "Cvasciuc 2020"
+
+. save "Data/Cvasciuc 2020", replace
+file Data/Cvasciuc 2020.dta saved
+
+. 
+. 
+. ** Ebbehoj 2021
+. /* Population from Statistics Denmark (source cited in paper): 
+> https://www.statbank.dk/statbank5a/default.asp?w=1920
+> */
+. clear
+
+. input year pop cases
+
+          year        pop      cases
+  1. 1977 5079879 6
+  2. 1978 5096959 7
+  3. 1979 5111537 8
+  4. 1980 5122065 9
+  5. 1981 5123989 8
+  6. 1982 5119155 9
+  7. 1983 5116464 9
+  8. 1984 5112130 11
+  9. 1985 5111108 6
+ 10. 1986 5116273 14
+ 11. 1987 5124794 9
+ 12. 1988 5129254 17
+ 13. 1989 5129778 7
+ 14. 1990 5135409 14
+ 15. 1991 5146469 12
+ 16. 1992 5162126 7
+ 17. 1993 5180614 6
+ 18. 1994 5196642 12
+ 19. 1995 5215718 10
+ 20. 1996 5251027 10
+ 21. 1997 5275121 12
+ 22. 1998 5294860 17
+ 23. 1999 5313577 12
+ 24. 2000 5330020 15
+ 25. 2001 5349212 21
+ 26. 2002 5368354 12
+ 27. 2003 5383507 13
+ 28. 2004 5397640 15
+ 29. 2005 5411405 12
+ 30. 2006 5427459 19
+ 31. 2007 5447084 16
+ 32. 2008 5475791 19
+ 33. 2009 5511451 23
+ 34. 2010 5534738 26
+ 35. 2011 5560628 22
+ 36. 2012 5580516 26
+ 37. 2013 5602628 27
+ 38. 2014 5627235 33
+ 39. 2015 5659715 36
+ 40. end
+
+. gen ref = "Ebbehoj 2021"
+
+. save "Data/Ebbehoj 2021", replace
+file Data/Ebbehoj 2021.dta saved
+
+. 
+. 
+. ** Leung 2021
+. // Population from paper (in supplementary)
+. clear
+
+. input year pop cases
+
+          year        pop      cases
+  1. 2012 3910117 30
+  2. 2013 4068062 34
+  3. 2014 4228125 37
+  4. 2015 4354660 34
+  5. 2016 4449483 34
+  6. 2017 4529842 32
+  7. 2018 4598089 38
+  8. end
+
+. gen ref = "Leung 2021"
+
+. save "Data/Leung 2021", replace
+file Data/Leung 2021.dta saved
+
+. 
+end of do-file
+
+. do 2_DataPrep.do
+
+. ***** 2_DataPrep.do *****
+. 
+. *** Combine study files
+. clear
+
+. local files : dir "Data/" files "*.dta"
+
+. di `"`files'"'
+"andersen 1988.dta" "beard 1984.dta" "berends 2018.dta" "cvasciuc 2020.dta" "ebbehoj 2020.dta" "ebbehoj 2021.dta" "fernandez-calvet 1994
+> .dta" "graeff 1964.dta" "hartley 1985.dta" "holland 2014.dta" "kim 2020.dta" "leung 2021.dta" "stenström 1986.dta" "takayanagi 2000.dt
+> a"
+
+. 
+. foreach file of local files {
+  2.     append using "Data/`file'"
+  3. }
+(note: variable ref was str13, now str21 to accommodate using data's values)
+
+. tempfile filescombined
+
+. save `filescombined', replace
+(note: file C:\Users\au335571\AppData\Local\Temp\ST_4fec_000001.tmp not found)
+file C:\Users\au335571\AppData\Local\Temp\ST_4fec_000001.tmp saved
+
+. 
+. 
+. *** Add study overview data
+. import excel Input/StudyOverview.xlsx, clear first
+(10 vars, 14 obs)
+
+. 
+. * Year vars
+. gen period =string(year_from)+"-"+string(year_to), after(ref)
+
+. gen year_middle = (year_from+year_to)/2
+
+. 
+. 
+. * Secondary ref name (year first, author last)
+. gen ref2 = string(year_pub) + " " + subinstr(ref, " " + string(year_pub), "", 1) , after(ref)
+
+. 
+. * Calculate overall IR
+. merge 1:m ref using `filescombined', assert(match) nogen keepusing(pop)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                               178  
+    -----------------------------------------
+
+. bysort ref: egen total_pop = sum(pop)
+
+. drop pop
+
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(164 observations deleted)
+
+. 
+. foreach var in mean se lb ub {
+  2.     qui: gen total_`var' = .
+  3. }
+
+. 
+. qui: count
+
+. forvalues x = 1/`r(N)' {
+  2.     local pop = total_pop[`x']
+  3.         local cases = total_cases[`x']
+  4.         qui: cii means `pop' `cases', poisson
+  5.         foreach var in mean se lb ub {
+  6.                 qui: replace total_`var' = `r(`var')'*100000 if _n==`x'
+  7.         }
+  8. }
+
+. 
+. 
+. * Save
+. drop year_from year_to notes
+
+. order inletter year_pub ref location period tumor altitude total_cases
+
+. save Output/StudyOverview.dta, replace
+file Output/StudyOverview.dta saved
+
+. export excel Output/StudyOverview.xlsx, replace firstrow(var)
+file Output/StudyOverview.xlsx saved
+
+. 
+. 
+. *** Calculate IR and SE by year
+. use Output/StudyOverview.dta, clear
+
+. merge 1:m ref using `filescombined', assert(match) nogen
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                               178  
+    -----------------------------------------
+
+. 
+. * Find middle year for papers which only provides period-estimates
+. replace year = (year_from+year_to)/2 if mi(year)
+(5 real changes made)
+
+. drop year_from year_to
+
+. 
+. foreach var in mean se lb ub {
+  2.     qui: gen `var' = .
+  3. }
+
+. 
+. qui: count
+
+. forvalues x = 1/`r(N)' {
+  2.     local pop = pop[`x']
+  3.         local cases = cases[`x']
+  4.         qui: cii means `pop' `cases', poisson
+  5.         foreach var in mean se lb ub {
+  6.                 qui: replace `var' = `r(`var')'*100000 if _n==`x'
+  7.         }
+  8. }
+
+. 
+. 
+. * Save
+. save Output/IncidenceByYear.dta, replace
+file Output/IncidenceByYear.dta saved
+
+. export excel Output/IncidenceByYear.xlsx, replace firstrow(var)
+file Output/IncidenceByYear.xlsx saved
+
+. 
+end of do-file
+
+. 
+. do 3_GraphIncidence.do
+
+. ***** 3_GraphIncidence.do *****
+. 
+. *** Graph incidence lines
+. use Output/IncidenceByYear, clear
+
+. drop if ref =="Andersen 1988" // same population as Ebbehoj 2021
+(1 observation deleted)
+
+. 
+. gen id=_n
+
+. 
+. local x = 1
+
+. levelsof ref2, local(refs)
+`"1964 Graeff"' `"1983 Beard"' `"1985 Hartley"' `"1986 Stenström"' `"1994 Fernandez-Calvet"' `"2000 Takayanagi"' `"2014 Holland"' `"2018
+>  Berends"' `"2020 Cvasciuc"' `"2020 Ebbehoj"' `"2020 Kim"' `"2021 Ebbehoj"' `"2021 Leung"'
+
+. 
+. foreach ref of local refs {
+  2.     * Figure
+.         local twoway = `"`twoway' (connected mean year if ref2=="`ref'", msize(0.5) )"'
+  3.         
+.         * legend
+.         qui: su id if ref2=="`ref'"
+  4.         local ncases = total_cases[`r(min)']
+  5.         local label = `"`label' `x' "`ref' (N=`ncases')" "'
+  6.         
+.         local x=`x'+1
+  7. }
+
+. 
+. twoway `twoway', ///
+>         /// Overall settings
+>         scheme(s1mono) ///
+>         legend(order(`label') colfirst) ///
+>         /// x-axis
+>         xtitle("Year") ///
+>         /// y-axis
+>         ytitle("Cases per 100,000 person-years") ///
+>         ymtick(0(0.1)2) ///
+>         ylines(0.5(0.5)2, lwidth(0.05) lcolor(gs6%20%))
+(note:  named style gs6 % 20 % not found in class color, default attributes used)
+
+.         
+. graph export Output/IncidenceByYear.png, replace
+(file Output/IncidenceByYear.png written in PNG format)
+
+. graph export Output/IncidenceByYear.pdf, replace
+(file Output/IncidenceByYear.pdf written in PDF format)
+
+. 
+end of do-file
+
+. do 3_MetaRegression.do
+
+. ***** 3_MetaRegression.do *****
+. 
+. capture: program drop meta_bubble
+
+. program define meta_bubble
+  1. syntax, var(varname) save(string) *
+  2. meta regress c.`var'
+  3. 
+. * P-value in notes
+. matrix A = r(table)
+  4. local pval = A[4, 1]
+  5. pval_tostring, pval(A[4, 1])
+  6. 
+. * bubbleplot
+. estat bubbleplot, ///
+>         scheme(s2mono) ///
+>         ytitle("Cases per 100,000 person-years") ///
+>         title("") note("P`r(pvalstring)'") ///
+>         legend(off) `options' //
+  7. graph export "Output/`save'.png", replace
+  8. graph export "Output/`save'.pdf", replace
+  9. end
+
+. 
+.         
+. *** Meta-regression
+. ** Overall estimates (similar to letter by Leung et al)
+. use Output/StudyOverview.dta, clear
+
+. drop if ref=="Andersen 1988" // same study population as Ebbehoj 2021
+(1 observation deleted)
+
+. 
+. meta set total_mean total_se /// 
+>         , studylabel(ref2)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies:  13
+       Study label:  ref2
+        Study size:  N/A
+
+       Effect size
+              Type:  Generic
+             Label:  Effect Size
+          Variable:  total_mean
+
+         Precision
+         Std. Err.:  total_se
+                CI:  [_meta_cil, _meta_ciu]
+          CI level:  95%
+
+  Model and method
+             Model:  Random-effects
+            Method:  REML
+
+. 
+.         
+. meta summarize
+
+  Effect-size label:  Effect Size
+        Effect size:  total_mean
+          Std. Err.:  total_se
+        Study label:  ref2
+
+Meta-analysis summary                         Number of studies =     13
+Random-effects model                          Heterogeneity:
+Method: REML                                              tau2 =  0.0647
+                                                        I2 (%) =   99.71
+                                                            H2 =  347.52
+
+------------------------------------------------------------------------
+                Study |    Effect Size    [95% Conf. Interval]  % Weight
+----------------------+-------------------------------------------------
+           1983 Beard |          0.946       0.432       1.460      4.03
+         2018 Berends |          0.438       0.416       0.460      8.30
+        2020 Cvasciuc |          0.531       0.419       0.643      7.92
+         2020 Ebbehoj |          0.449       0.214       0.684      6.81
+         2021 Ebbehoj |          0.275       0.252       0.297      8.30
+1994 Fernandez-Calvet |          0.206       0.098       0.313      7.95
+          1964 Graeff |          0.042       0.029       0.054      8.31
+         1985 Hartley |          0.164       0.117       0.212      8.24
+         2014 Holland |          0.468       0.281       0.655      7.29
+             2020 Kim |          0.177       0.167       0.188      8.31
+           2021 Leung |          0.793       0.692       0.894      7.99
+       1986 Stenström |          0.230       0.208       0.252      8.30
+      2000 Takayanagi |          0.816       0.767       0.866      8.24
+----------------------+-------------------------------------------------
+                theta |          0.402       0.258       0.546
+------------------------------------------------------------------------
+Test of theta = 0: z = 5.48                          Prob > |z| = 0.0000
+Test of homogeneity: Q = chi2(12) = 1912.88            Prob > Q = 0.0000
+
+. 
+. meta_bubble, var(year_middle) save(Overall_MiddleYear) xtitle(Median year of study period) ///
+>         addplot((scatter _meta_es year_middle, ///
+>                 legend(off) mlabel(ref) mlabcolor(black) mlabsize(1.5) msymbol(none) mlabgap(4-pt)))
+
+  Effect-size label:  Effect Size
+        Effect size:  total_mean
+          Std. Err.:  total_se
+
+Random-effects meta-regression                      Number of obs  =        13
+Method: REML                                        Residual heterogeneity:
+                                                                tau2 =  .04691
+                                                              I2 (%) =   99.40
+                                                                  H2 =  166.63
+                                                       R-squared (%) =   27.48
+                                                    Wald chi2(1)   =      3.68
+                                                    Prob > chi2    =    0.0550
+------------------------------------------------------------------------------
+    _meta_es |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+ year_middle |    .006357   .0033126     1.92   0.055    -.0001356    .0128496
+       _cons |   -12.2716   6.602047    -1.86   0.063    -25.21137     .668176
+------------------------------------------------------------------------------
+Test of residual homogeneity: Q_res = chi2(11) = 1329.60 Prob > Q_res = 0.0000
+(file Output/Overall_MiddleYear.png written in PNG format)
+(file Output/Overall_MiddleYear.pdf written in PDF format)
+
+.         
+. meta_bubble, var(altitude) save(Overall_Altitude) xtitle(Altitude in meters) ///
+>         addplot((scatter _meta_es altitude, ///
+>                 legend(off)  mlabel(ref) mlabcolor(black) mlabsize(1.5) msymbol(none) mlabgap(4-pt)))
+
+  Effect-size label:  Effect Size
+        Effect size:  total_mean
+          Std. Err.:  total_se
+
+Random-effects meta-regression                      Number of obs  =        13
+Method: REML                                        Residual heterogeneity:
+                                                                tau2 =  .05529
+                                                              I2 (%) =   99.65
+                                                                  H2 =  286.74
+                                                       R-squared (%) =   14.51
+                                                    Wald chi2(1)   =      3.12
+                                                    Prob > chi2    =    0.0775
+------------------------------------------------------------------------------
+    _meta_es |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    altitude |   .0006193   .0003509     1.77   0.078    -.0000684    .0013071
+       _cons |   .2789581    .096522     2.89   0.004     .0897784    .4681378
+------------------------------------------------------------------------------
+Test of residual homogeneity: Q_res = chi2(11) = 1879.45 Prob > Q_res = 0.0000
+(file Output/Overall_Altitude.png written in PNG format)
+(file Output/Overall_Altitude.pdf written in PDF format)
+
+. 
+. 
+. ** Annual estimates
+. use Output/IncidenceByYear, clear
+
+. drop if ref=="Andersen 1988" // same population as Ebbehoj 2021
+(1 observation deleted)
+
+. 
+. meta set mean se if mean!=0 /// cannot include years with N=0
+>         , studylabel(ref2)
+(17 missing values generated)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies:  160
+       Study label:  ref2
+        Study size:  N/A
+
+       Effect size
+              Type:  Generic
+             Label:  Effect Size
+          Variable:  mean
+
+         Precision
+         Std. Err.:  se
+                CI:  [_meta_cil, _meta_ciu]
+          CI level:  95%
+
+  Model and method
+             Model:  Random-effects
+            Method:  REML
+
+. 
+. meta_bubble, var(year) save(YearlyData_Year) xtitle(Year) ///
+>         addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))
+
+  Effect-size label:  Effect Size
+        Effect size:  mean
+          Std. Err.:  se
+
+Random-effects meta-regression                      Number of obs  =       160
+Method: REML                                        Residual heterogeneity:
+                                                                tau2 =  .01538
+                                                              I2 (%) =   90.94
+                                                                  H2 =   11.03
+                                                       R-squared (%) =   46.95
+                                                    Wald chi2(1)   =    102.75
+                                                    Prob > chi2    =    0.0000
+------------------------------------------------------------------------------
+    _meta_es |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        year |   .0061566   .0006074    10.14   0.000     .0049662     .007347
+       _cons |  -11.96608   1.208228    -9.90   0.000    -14.33416   -9.597994
+------------------------------------------------------------------------------
+Test of residual homogeneity: Q_res = chi2(158) = 1638.64Prob > Q_res = 0.0000
+(file Output/YearlyData_Year.png written in PNG format)
+(file Output/YearlyData_Year.pdf written in PDF format)
+
+. 
+. meta_bubble, var(altitude) save(YearlyData_Altitude) xtitle(Altitude in meters) ///
+>         addplot(scatteri ///
+>                 0.1 134 `"1964 Graeff"'  ///
+>                 0.87 355 `"1983 Beard"'  ///
+>                 0.4 111 `"1985 Hartley"'  ///
+>                 0.4 120 `"1986 Stenström"'  ///
+>                 0.40 297 `"1994 Fernandez-Calvet"'  ///
+>                 0.82 104 `"2000 Takayanagi"'  ///
+>                 0.48 77 `"2014 Holland"'  ///
+>                 0.67 134 `"2018 Berends"'  ///
+>                 0.93 64 `"2020 Cvasciuc"' ///
+>                 1.3 355 `"2020 Ebbehoj"'  ///
+>                 0.25 72 `"2020 Kim"'  ///
+>                 0.65 64 `"2021 Ebbehoj"'  ///
+>                 0.87 773 `"2021 Leung"' ///
+>                 , msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5))
+
+  Effect-size label:  Effect Size
+        Effect size:  mean
+          Std. Err.:  se
+
+Random-effects meta-regression                      Number of obs  =       160
+Method: REML                                        Residual heterogeneity:
+                                                                tau2 =  .02234
+                                                              I2 (%) =   93.76
+                                                                  H2 =   16.03
+                                                       R-squared (%) =   22.96
+                                                    Wald chi2(1)   =     47.26
+                                                    Prob > chi2    =    0.0000
+------------------------------------------------------------------------------
+    _meta_es |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    altitude |   .0007447   .0001083     6.87   0.000     .0005324     .000957
+       _cons |   .1925507   .0196044     9.82   0.000     .1541267    .2309746
+------------------------------------------------------------------------------
+Test of residual homogeneity: Q_res = chi2(158) = 2704.00Prob > Q_res = 0.0000
+(file Output/YearlyData_Altitude.png written in PNG format)
+(file Output/YearlyData_Altitude.pdf written in PDF format)
+
+. 
+. ** Annual estimates (wo./Kim et al)
+. use Output/IncidenceByYear, clear
+
+. drop if ref=="Andersen 1988" | ref=="Kim 2020"
+(13 observations deleted)
+
+. 
+. meta set mean se if mean!=0 /// cannot include years with N=0
+>         , studylabel(ref2)
+(17 missing values generated)
+
+Meta-analysis setting information
+
+ Study information
+    No. of studies:  148
+       Study label:  ref2
+        Study size:  N/A
+
+       Effect size
+              Type:  Generic
+             Label:  Effect Size
+          Variable:  mean
+
+         Precision
+         Std. Err.:  se
+                CI:  [_meta_cil, _meta_ciu]
+          CI level:  95%
+
+  Model and method
+             Model:  Random-effects
+            Method:  REML
+
+. 
+. meta_bubble, var(year) save(YearlyData_Year_woKim) xtitle(Year) ///
+>         addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))
+
+  Effect-size label:  Effect Size
+        Effect size:  mean
+          Std. Err.:  se
+
+Random-effects meta-regression                      Number of obs  =       148
+Method: REML                                        Residual heterogeneity:
+                                                                tau2 = .009272
+                                                              I2 (%) =   81.47
+                                                                  H2 =    5.40
+                                                       R-squared (%) =   70.31
+                                                    Wald chi2(1)   =    202.35
+                                                    Prob > chi2    =    0.0000
+------------------------------------------------------------------------------
+    _meta_es |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        year |   .0075792   .0005328    14.23   0.000     .0065349    .0086235
+       _cons |  -14.76777   1.058181   -13.96   0.000    -16.84177   -12.69377
+------------------------------------------------------------------------------
+Test of residual homogeneity: Q_res = chi2(146) = 678.02 Prob > Q_res = 0.0000
+(file Output/YearlyData_Year_woKim.png written in PNG format)
+(file Output/YearlyData_Year_woKim.pdf written in PDF format)
+
+. 
+. meta_bubble, var(altitude) save(YearlyData_Altitude_woKim) xtitle(Altitude in meters) ///
+>         addplot(scatteri ///
+>                 0.1 134 `"1964 Graeff"'  ///
+>                 0.87 355 `"1983 Beard"'  ///
+>                 0.4 111 `"1985 Hartley"'  ///
+>                 0.4 120 `"1986 Stenström"'  ///
+>                 0.40 297 `"1994 Fernandez-Calvet"'  ///
+>                 0.82 104 `"2000 Takayanagi"'  ///
+>                 0.48 77 `"2014 Holland"'  ///
+>                 0.67 134 `"2018 Berends"'  ///
+>                 0.93 64 `"2020 Cvasciuc"' ///
+>                 1.3 355 `"2020 Ebbehoj"'  ///
+>                 0.65 64 `"2021 Ebbehoj"'  ///
+>                 0.87 773 `"2021 Leung"' ///
+>                 , msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5))
+
+  Effect-size label:  Effect Size
+        Effect size:  mean
+          Std. Err.:  se
+
+Random-effects meta-regression                      Number of obs  =       148
+Method: REML                                        Residual heterogeneity:
+                                                                tau2 =  .02448
+                                                              I2 (%) =   92.30
+                                                                  H2 =   12.98
+                                                       R-squared (%) =   21.62
+                                                    Wald chi2(1)   =     40.77
+                                                    Prob > chi2    =    0.0000
+------------------------------------------------------------------------------
+    _meta_es |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    altitude |   .0007174   .0001124     6.39   0.000     .0004972    .0009376
+       _cons |   .2050866   .0214773     9.55   0.000     .1629919    .2471812
+------------------------------------------------------------------------------
+Test of residual homogeneity: Q_res = chi2(146) = 2600.71Prob > Q_res = 0.0000
+(file Output/YearlyData_Altitude_woKim.png written in PNG format)
+(file Output/YearlyData_Altitude_woKim.pdf written in PDF format)
+
+. 
+end of do-file
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\au335571\Forskning\2021-EJE-letter-PPGL-altitude-and-time\Output/StataLog.log
+  log type:  text
+ closed on:  17 Aug 2021, 17:11:54
+----------------------------------------------------------------------------------------------------------------------------------------
