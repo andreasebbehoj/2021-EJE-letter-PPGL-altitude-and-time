@@ -33,3 +33,4 @@ twoway `twoway', ///
 	ylines(0.5(0.5)2, lwidth(0.05) lcolor(gs6%20%))
 	
 graph export Output/IncidenceByYear.png, replace
+graph export Output/IncidenceByYear.pdf, replace
