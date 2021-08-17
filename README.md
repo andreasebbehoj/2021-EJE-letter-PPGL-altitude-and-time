@@ -21,7 +21,8 @@ We searched Pubmed for all papers:
 2.	AND at least one outcome (incidence or epidemiology)
 3.	NOT of an irrelevant study type (case-reports, PC12 cell lines, etc.)
 
-Search string:
+**Search string:**
+
 ("Paraganglioma"[Mesh] OR "Pheochromocytoma"[Mesh] OR "Paraganglioma*"[Tiab] OR "Pheochromocytoma*"[Tiab])
 
 AND ("Epidemiology"[Mesh] OR "Epidemiology" [Subheading] OR "Epidemiologic Studies"[Mesh] OR “Incidence”[tiab] OR “Incidence-rate”[tiab])
