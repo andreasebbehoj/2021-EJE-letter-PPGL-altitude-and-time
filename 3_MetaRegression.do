@@ -49,7 +49,8 @@ meta set mean se if mean!=0 /// cannot include years with N=0
 	, studylabel(ref2)
 
 meta_bubble, var(year) save(YearlyData_Year) xtitle(Year) ///
-	addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))
+	addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))  ///
+		name(FigB, replace) title("B - by calendar year", pos(11))
 
 meta_bubble, var(altitude) save(YearlyData_Altitude) xtitle(Altitude in meters) ///
 	addplot(scatteri ///
@@ -66,7 +67,13 @@ meta_bubble, var(altitude) save(YearlyData_Altitude) xtitle(Altitude in meters) 
 		0.25 72 `"2020 Kim"'  ///
 		0.65 64 `"2021 Ebbehoj"'  ///
 		0.87 773 `"2021 Leung"' ///
-		, msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5))
+		, msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5)) ///
+		name(FigA, replace) title("A - by altitude", pos(11))
+
+* Combine figures
+graph combine FigA FigB, col(1) altshrink ysize(19.5cm) xsize(16.7cm)
+graph export Output/Fig1_IncidenceAltitudeAndYear.png, replace
+graph export Output/Fig1_IncidenceAltitudeAndYear.pdf, replace
 
 ** Annual estimates (wo./Kim et al)
 use Output/IncidenceByYear, clear

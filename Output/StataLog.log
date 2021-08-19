@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  C:\Users\au335571\Forskning\2021-EJE-letter-PPGL-altitude-and-time\Output/StataLog.log
   log type:  text
- opened on:  17 Aug 2021, 17:11:42
+ opened on:  19 Aug 2021, 17:03:48
 
 . 
 . ***** 0_Master.do *****
@@ -531,8 +531,8 @@ end of do-file
 . tempfile filescombined
 
 . save `filescombined', replace
-(note: file C:\Users\au335571\AppData\Local\Temp\ST_4fec_000001.tmp not found)
-file C:\Users\au335571\AppData\Local\Temp\ST_4fec_000001.tmp saved
+(note: file C:\Users\au335571\AppData\Local\Temp\ST_4f08_000001.tmp not found)
+file C:\Users\au335571\AppData\Local\Temp\ST_4f08_000001.tmp saved
 
 . 
 . 
@@ -893,7 +893,8 @@ Meta-analysis setting information
 
 . 
 . meta_bubble, var(year) save(YearlyData_Year) xtitle(Year) ///
->         addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))
+>         addplot(scatter mean year if ref=="Kim 2020" & year==2005, msymbol(none) mlabel(ref) mlabpos(6))  ///
+>                 name(FigB, replace) title("B - by calendar year", pos(11))
 
   Effect-size label:  Effect Size
         Effect size:  mean
@@ -933,7 +934,8 @@ Test of residual homogeneity: Q_res = chi2(158) = 1638.64Prob > Q_res = 0.0000
 >                 0.25 72 `"2020 Kim"'  ///
 >                 0.65 64 `"2021 Ebbehoj"'  ///
 >                 0.87 773 `"2021 Leung"' ///
->                 , msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5))
+>                 , msymbol(none) mlabel(ref2) mlabangle(vertical) mlabpos(1) mlabsize(1.5)) ///
+>                 name(FigA, replace) title("A - by altitude", pos(11))
 
   Effect-size label:  Effect Size
         Effect size:  mean
@@ -956,6 +958,16 @@ Method: REML                                        Residual heterogeneity:
 Test of residual homogeneity: Q_res = chi2(158) = 2704.00Prob > Q_res = 0.0000
 (file Output/YearlyData_Altitude.png written in PNG format)
 (file Output/YearlyData_Altitude.pdf written in PDF format)
+
+. 
+. * Combine figures
+. graph combine FigA FigB, col(1) altshrink ysize(19.5cm) xsize(16.7cm)
+
+. graph export Output/Fig1_IncidenceAltitudeAndYear.png, replace
+(file Output/Fig1_IncidenceAltitudeAndYear.png written in PNG format)
+
+. graph export Output/Fig1_IncidenceAltitudeAndYear.pdf, replace
+(file Output/Fig1_IncidenceAltitudeAndYear.pdf written in PDF format)
 
 . 
 . ** Annual estimates (wo./Kim et al)
@@ -1063,5 +1075,5 @@ end of do-file
       name:  <unnamed>
        log:  C:\Users\au335571\Forskning\2021-EJE-letter-PPGL-altitude-and-time\Output/StataLog.log
   log type:  text
- closed on:  17 Aug 2021, 17:11:54
+ closed on:  19 Aug 2021, 17:04:05
 ----------------------------------------------------------------------------------------------------------------------------------------
